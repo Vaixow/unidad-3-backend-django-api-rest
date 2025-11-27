@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Contacto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-10 bg-gray-100">
+
+<div class="max-w-lg mx-auto bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4 text-green-700">Crear Contacto</h1>
+
+    <form id="form">
+        <input id="nombre" class="w-full p-2 border mb-3" placeholder="Nombre">
+        <input id="telefono" class="w-full p-2 border mb-3" placeholder="Teléfono">
+        <input id="correo" class="w-full p-2 border mb-3" placeholder="Correo">
+        <input id="direccion" class="w-full p-2 border mb-3" placeholder="Dirección">
+
+        <button class="bg-green-600 text-white px-4 py-2 rounded">Guardar</button>
+    </form>
+</div>
+
+<script type="module">
+import { crearContacto } from "./js/contactos.js";
+
+document.getElementById("form").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    await crearContacto({
+        nombre: nombre.value,
+        telefono: telefono.value,
+        correo: correo.value,
+        direccion: direccion.value
+    });
+
+    window.location.href = "lista_contactos.html";
+});
+</script>
+</body>
+</html>

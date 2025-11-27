@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Contacto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-10 bg-gray-100">
+
+<div class="max-w-lg mx-auto bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4 text-yellow-700">Editar Contacto</h1>
+
+    <form id="form">
+        <input id="nombre" class="w-full p-2 border mb-3">
+        <input id="telefono" class="w-full p-2 border mb-3">
+        <input id="correo" class="w-full p-2 border mb-3">
+        <input id="direccion" class="w-full p-2 border mb-3">
+
+        <button class="bg-yellow-600 text-white px-4 py-2 rounded">Actualizar</button>
+    </form>
+</div>
+
+<script type="module">
+import { obtenerContacto, editarContacto } from "./js/contactos.js";
+
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+async function cargar() {
+    const c = await obtenerContacto(id);
+    nombre.value = c.nombre;
+    telefono.value = c.telefono;
+    correo.value = c.correo;
+    direccion.value = c.direccion;
+}
+cargar();
+
+document.getElementById("form").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    await editarContacto(id, {
+        nombre: nombre.value,
+        telefono: telefono.value,
+        correo: correo.value,
+        direccion: direccion.value
+    });
+
+    window.location.href = "lista_contactos.html";
+});
+</script>
+</body>
+</html>
