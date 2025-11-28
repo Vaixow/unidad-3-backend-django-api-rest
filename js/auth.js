@@ -1,43 +1,51 @@
-const TOKEN_URL = "https://TU-PROYECTO-RENDER.onrender.com/api/token/";
-const REFRESH_URL = "https://TU-PROYECTO-RENDER.onrender.com/api/token/refresh/";
+// js/auth.js
 
-export async function login(username, password) {
-    const response = await fetch(TOKEN_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-    });
+const API_URL = "https://ultimo-intento-ahora-si.onrender.com";
 
-    const data = await response.json();
-
-    if (response.ok) {
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
-        return true;
-    }
-    return false;
+export function saveToken(token) {
+    localStorage.setItem("token", token);
 }
 
-export async function refreshToken() {
-    const refresh = localStorage.getItem("refresh");
-
-    if (!refresh) return false;
-
-    const response = await fetch(REFRESH_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh })
-    });
-
-    if (!response.ok) return false;
-
-    const data = await response.json();
-    localStorage.setItem("access", data.access);
-    return true;
+export function getToken() {
+    return localStorage.getItem("token");
 }
 
 export function logout() {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
+    localStorage.removeItem("token");
     window.location.href = "login.html";
+}
+
+export async function login(username, password) {
+    const res = await fetch(`${API_URL}/api/token/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+    });
+
+    if (!res.ok) {
+        throw new Error("Credenciales incorrectas");
+    }
+
+    const data = await res.json();
+    saveToken(data.access);
+    return data.access;
+}
+
+export function requireAuth() {
+    const token = getToken();
+    if (!token) {
+        window.location.href = "login.html";
+        return false;
+    }
+    return true;
+}
+
+// Verifica si el token expiró (opcional)
+export function isTokenExpired(token) {
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.exp * 1000 < Date.now();
+    } catch {
+        return true;
+    }
 }

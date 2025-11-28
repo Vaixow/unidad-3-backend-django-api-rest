@@ -1,0 +1,14 @@
+<script type="module">
+import { protectPage } from "./js/router.js";
+import { apiDelete } from "./js/api.js";
+
+protectPage();
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+document.getElementById("btnEliminar").onclick = async () => {
+    await apiDelete(`/api/contacto/${id}/`);
+    window.location.href = "index.html";
+}
+</script>

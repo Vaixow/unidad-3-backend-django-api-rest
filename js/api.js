@@ -1,33 +1,60 @@
-const API_URL = "https://TU-PROYECTO-RENDER.onrender.com/api";
+// js/api.js
 
-export async function apiRequest(endpoint, method = "GET", data = null) {
-    const token = localStorage.getItem("access");
+import { getToken, logout } from "./auth.js";
 
-    if (!token) {
-        window.location.href = "login.html";
-        return;
-    }
+const API_URL = "https://ultimo-intento-ahora-si.onrender.com";
 
-    const options = {
-        method,
+export async function apiGet(path) {
+    const res = await fetch(`${API_URL}${path}`, {
         headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-        }
-    };
+            "Authorization": `Bearer ${getToken()}`,
+        },
+    });
 
-    if (data) {
-        options.body = JSON.stringify(data);
-    }
+    if (res.status === 401) logout();
 
-    const response = await fetch(`${API_URL}${endpoint}`, options);
+    return res.json();
+}
 
-    // Si token expiró → refrescar
-    if (response.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) return apiRequest(endpoint, method, data);
-        window.location.href = "login.html";
-    }
+export async function apiPost(path, body) {
+    const res = await fetch(`${API_URL}${path}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify(body),
+    });
 
-    return response.json();
+    if (res.status === 401) logout();
+
+    return res.json();
+}
+
+export async function apiPut(path, body) {
+    const res = await fetch(`${API_URL}${path}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (res.status === 401) logout();
+
+    return res.json();
+}
+
+export async function apiDelete(path) {
+    const res = await fetch(`${API_URL}${path}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+        },
+    });
+
+    if (res.status === 401) logout();
+
+    return res.ok;
 }

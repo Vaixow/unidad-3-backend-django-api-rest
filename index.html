@@ -1,0 +1,12 @@
+<script type="module">
+import { protectPage } from "./js/router.js";
+import { apiGet } from "./js/api.js";
+
+protectPage();
+
+async function loadContactos() {
+    const data = await apiGet("/api/contacto/");
+    console.log(data); // Aquí los pintas en tu tabla
+}
+loadContactos();
+</script>
